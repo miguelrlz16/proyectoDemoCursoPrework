@@ -98,12 +98,12 @@ footer{color:var(--muted);font-size:.85rem}
 <script>
 /* ======= DATOS: se actualizan con cada revisión ======= */
 const STATE = {
-  status: "wait",                 // wait | run | done | bad
-  label: "Esperando tu respuesta",
-  note: "Tu sesión de Línea Cóndor pide que confirmes en ese chat: A (todo, con backtest) o B (solo medir). Los turnos programados siguen normales.",
-  startedAt: null,                // ISO, cuando empiece el trabajo
+  status: "run",                 // wait | run | done | bad
+  label: "En curso · Plan A",
+  note: "Aprobaste el plan A a las 13:15. Fase actual: medición del historial (calibracion.py). Después vienen el backtest, aplicar solo lo que mejore y el informe. Los turnos programados siguen normales.",
+  startedAt: "2026-11-26T18:15:00Z",                // ISO, cuando empiece el trabajo
   finishedAt: null,
-  updated: "26/11/2026 13:20"
+  updated: "26/11/2026 13:16"
 };
 const SPORTS = [
   { name:"Fútbol", steps:[
