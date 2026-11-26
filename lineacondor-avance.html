@@ -1,0 +1,168 @@
+<title>Avance Línea Cóndor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: una columna de tablero; resumen arriba (estado + contador), luego deportes, luego herramientas */
+:root{
+  --bg:#f3f5f2; --panel:#ffffff; --fg:#17201b; --muted:#5d6a62; --line:#dbe2dc;
+  --accent:#0f6b4a; --good:#1d8a4f; --warn:#b7791f; --wait:#6b6f8a; --bad:#b3412f;
+  --display:"Barlow Condensed",Impact,"Arial Narrow",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1512; --panel:#17201b; --fg:#e7eee9; --muted:#9aa9a0; --line:#2a3630;
+  --accent:#4fc28f; --good:#5ad08c; --warn:#e3aa4f; --wait:#a3a8cc; --bad:#ec7b66; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1512; --panel:#17201b; --fg:#e7eee9; --muted:#9aa9a0; --line:#2a3630;
+  --accent:#4fc28f; --good:#5ad08c; --warn:#e3aa4f; --wait:#a3a8cc; --bad:#ec7b66; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body)}
+.wrap{max-width:980px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:20px}
+h1,h2,h3{font-family:var(--display);letter-spacing:.01em;text-wrap:balance;margin:0}
+h1{font-size:2.4rem;line-height:1}
+h2{font-size:1.5rem}
+h3{font-size:1.2rem}
+.eyebrow{font:600 .72rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.status{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+@media (max-width:640px){.status{grid-template-columns:1fr}}
+.pill{display:inline-flex;align-items:center;gap:8px;font:600 .8rem var(--body);padding:5px 10px;border-radius:999px;border:1px solid currentColor}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.s-wait{color:var(--wait)} .s-run{color:var(--warn)} .s-done{color:var(--good)} .s-bad{color:var(--bad)}
+.counter{display:flex;gap:18px;flex-wrap:wrap}
+.counter div{display:grid;gap:4px}
+.big{font:700 2rem/1 var(--mono);font-variant-numeric:tabular-nums}
+.bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .4s}
+.note{color:var(--muted);margin:8px 0 0}
+.sports{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.sport{display:grid;gap:12px;align-content:start;min-width:0}
+.sport header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mini{font:700 .9rem var(--mono);color:var(--muted)}
+ul.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.steps li{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:start}
+.dot{width:12px;height:12px;border-radius:50%;margin-top:5px;border:2px solid currentColor}
+.dot.done{background:currentColor}
+.src{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 .75rem var(--body);padding:3px 8px;border-radius:6px;background:var(--bg);border:1px solid var(--line)}
+.chip b{font-weight:600}
+.chip.use{border-color:var(--accent)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+td code{font:500 .82rem var(--mono)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.85rem}
+footer{color:var(--muted);font-size:.85rem}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Mejora del modelo · Hora Ecuador (GMT-5)</span>
+    <h1>Avance Línea Cóndor</h1>
+  </header>
+
+  <section class="panel status" aria-labelledby="st-h">
+    <div>
+      <h2 id="st-h">Estado</h2>
+      <p style="margin:8px 0 0"><span class="pill" id="pill"></span></p>
+      <p class="note" id="stnote"></p>
+      <div class="bar" aria-hidden="true"><i id="barfill" style="width:0"></i></div>
+    </div>
+    <div class="counter">
+      <div><span class="eyebrow">Pasos hechos</span><span class="big" id="cnt">0/0</span></div>
+      <div><span class="eyebrow">Tiempo de trabajo</span><span class="big" id="clock">—</span></div>
+      <div><span class="eyebrow">Estimado</span><span class="big">4–7 h</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="sp-h" style="display:grid;gap:12px">
+    <h2 id="sp-h">Por deporte</h2>
+    <div class="legend"><span><span class="chip use"><b>En uso</b></span> ya lo usa la cartelera</span><span><span class="chip"><b>Propuesto</b></span> fuente que conviene sumar</span></div>
+    <div class="sports" id="sports"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="tl-h" style="display:grid;gap:12px">
+    <h2 id="tl-h">Conectores y herramientas</h2>
+    <p class="note" style="margin:0">No existe un conector de Claude con estadísticas deportivas. Los datos llegan por APIs y por los scripts de tu sesión de Línea Cóndor; los conectores sirven para publicar.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Herramienta</th><th>Tipo</th><th>Para qué</th></tr></thead>
+      <tbody id="tools"></tbody>
+    </table></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ======= DATOS: se actualizan con cada revisión ======= */
+const STATE = {
+  status: "wait",                 // wait | run | done | bad
+  label: "Esperando tu respuesta",
+  note: "Tu sesión de Línea Cóndor pide que confirmes en ese chat: A (todo, con backtest) o B (solo medir). Los turnos programados siguen normales.",
+  startedAt: null,                // ISO, cuando empiece el trabajo
+  finishedAt: null,
+  updated: "26/11/2026 13:20"
+};
+const SPORTS = [
+  { name:"Fútbol", steps:[
+      ["Medir acierto y ROI por confianza, liga y mercado", false],
+      ["Cuotas sin margen (probabilidad de mercado)", false],
+      ["Modelo de goles Poisson + Dixon-Coles", false],
+      ["Córners, remates, tarjetas y atajadas (binomial negativa)", false],
+      ["Creadores de apuestas por simulación", false],
+      ["Backtest y despliegue", false]],
+    src:[["SofaScore (caché de partidos)",1],["football-data (caché)",1],["data/stats",1],["API-Football",0],["xG de Understat / FBref",0],["The Odds API",0]] },
+  { name:"NBA", steps:[
+      ["Medir acierto y ROI de NBA y props de jugador", false],
+      ["Spread y total del mercado sin margen", false],
+      ["Ajuste por rating ofensivo/defensivo, descanso y lesiones", false],
+      ["Props de jugador: minutos esperados × tasa", false],
+      ["Backtest y despliegue", false]],
+    src:[["relleno_nba.py",1],["Línea de la casa en props",1],["NBA Stats / balldontlie",0],["Reporte oficial de lesiones",0],["The Odds API",0]] },
+  { name:"NFL", steps:[
+      ["Medir acierto y ROI de NFL", false],
+      ["Spread y total del mercado sin margen", false],
+      ["Ajuste por EPA por jugada, QB titular y lesiones", false],
+      ["Backtest y despliegue", false]],
+    src:[["Búsqueda web de previas",1],["nflverse (EPA)",0],["Reporte de lesiones NFL",0],["The Odds API",0]] },
+  { name:"Béisbol (MLB)", steps:[
+      ["Medir acierto y ROI de MLB", false],
+      ["Moneyline y total sin margen", false],
+      ["Abridores: ponches por K% × entradas esperadas", false],
+      ["Backtest y despliegue", false]],
+    src:[["Búsqueda web de previas",1],["MLB StatsAPI (abridores probables)",0],["Baseball Savant / Statcast",0],["The Odds API",0]] }
+];
+const TOOLS = [
+  ["Sesión Cowork «Análisis de apuestas deportivas»","Sesión de Claude","Ejecuta los cambios: tiene el código, los datos y la clave LC_PRIV"],
+  ["<code>build_dia.py</code> · <code>relleno_nba.py</code> · <code>vip.py</code>","Scripts tuyos","Arman la cartelera, el relleno NBA y el VIP; aquí entra el nuevo modelo"],
+  ["<code>modelo.py</code> (nuevo)","Script","Cuotas sin margen, Poisson/Dixon-Coles, binomial negativa, simulación"],
+  ["<code>calibracion.py</code> (nuevo)","Script","Acierto, ROI, Brier y CLV por confianza, liga y mercado; informe cada lunes"],
+  ["<code>verifica.py</code>","Script","Revisión antes de desplegar; si falla, no se publica"],
+  ["Cloudflare Pages","Despliegue","Publica lineacondor.pages.dev"],
+  ["Buffer","Conector","Posts en X"],
+  ["Relay de Telegram","Script","Mensajes al canal"],
+  ["Búsqueda y lectura web","Herramienta","Lesiones, alineaciones, abridores y cuotas"],
+  ["APIs con clave (API-Sports, The Odds API, stats)","APIs","Estadísticas y cuotas; hay claves guardadas en tu entorno de Claude Code"],
+  ["Esta página","Seguimiento","La actualizo cuando reviso el avance de la sesión"]
+];
+/* ======= RENDER ======= */
+const $=id=>document.getElementById(id);
+const all=SPORTS.flatMap(s=>s.steps), done=all.filter(x=>x[1]).length;
+const pill=$("pill"); pill.className="pill s-"+STATE.status; pill.textContent=STATE.label;
+$("stnote").textContent=STATE.note;
+$("cnt").textContent=`${done}/${all.length}`;
+$("barfill").style.width=(all.length?done/all.length*100:0)+"%";
+$("sports").innerHTML=SPORTS.map(s=>{const d=s.steps.filter(x=>x[1]).length;
+  return `<article class="panel sport"><header><h3>${s.name}</h3><span class="mini">${d}/${s.steps.length}</span></header>
+  <ul class="steps">${s.steps.map(([t,ok])=>`<li><span class="dot ${ok?"done":""}" style="color:var(${ok?"--good":"--wait"})"></span><span>${t}</span></li>`).join("")}</ul>
+  <div><span class="eyebrow">Fuentes de datos</span><div class="src" style="margin-top:6px">${s.src.map(([n,u])=>`<span class="chip ${u?"use":""}">${n}</span>`).join("")}</div></div></article>`}).join("");
+$("tools").innerHTML=TOOLS.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+$("foot").textContent="Última revisión: "+STATE.updated+" · Las fuentes marcadas «Propuesto» se suman solo si el backtest muestra que mejoran.";
+function tick(){ if(!STATE.startedAt){$("clock").textContent="—";return}
+  const end=STATE.finishedAt?new Date(STATE.finishedAt):new Date(); let s=Math.max(0,Math.floor((end-new Date(STATE.startedAt))/1000));
+  const h=Math.floor(s/3600), m=Math.floor(s%3600/60); s%=60;
+  $("clock").textContent=`${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`; }
+tick(); setInterval(tick,1000);
+</script>
